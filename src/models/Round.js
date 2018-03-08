@@ -1,5 +1,8 @@
 export default class Round {
   constructor() {
+    this.complete = false
+    this.winner = null
+    this.loser = null
     this.sets = [
       {
         id: 1,

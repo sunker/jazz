@@ -1,20 +1,22 @@
 <template>
   <div style="width:100%">
-    <v-stepper v-model="e1">
+    <v-stepper v-model="currentStep" alt-labels>
       <v-stepper-header>
         <template v-for="(set, index) in sets">
             <v-stepper-step
               :key="set.name"
-              :step="set.name"
+              edit-icon="check"
+              :step="set.id"
               :complete="stepComplete(set)"
-              editable>
+              :editable="stepEditable(set)">
+              {{set.name}}
             </v-stepper-step>
             <v-divider v-if="index + 1 !== sets.length" v-bind:key="index"></v-divider>
       </template>
       </v-stepper-header>
       <v-stepper-items>
         <v-stepper-content
-          :step="set.name"
+          :step="set.id"
           v-for="(set, index) in sets"
           :key="set.name">
           <template>
@@ -42,7 +44,7 @@
               </v-layout>
             </v-layout>
           </template>
-          <v-btn color="primary" @click="nextStep(index+1)">Continue</v-btn>
+          <v-btn color="primary" @click.native.stop="dialog = true">Continue</v-btn>
           <v-btn flat>Cancel</v-btn>
         </v-stepper-content>
       </v-stepper-items>
@@ -69,7 +71,15 @@ export default {
         case 12:
           return 22
       }
-    }
+    },
+    currentStep: {
+      get() {
+        return !this.currentRound ? 1 : this.currentRound.sets.find(x => x.selected).id
+      },
+      set(value) {
+        this.$store.commit('setSelectedSet', { id: value })
+      }
+    },
   },
   methods: {
     disableIncrementButton({ id, max }, playerId) {
@@ -92,15 +102,19 @@ export default {
       this.$store.dispatch('decrement', { id, step, playerId: player.id })
     },
     stepComplete({id, max}) {
-      console.log(this.currentRound)
-      // return false
       return this.currentRound ? this.currentRound.sets.find(x => x.id === id).complete : false
+    },
+    stepEditable({id, max}) {
+      if (!this.currentRound) return false
+      const previous = this.currentRound.sets.filter(x => x.id < id)
+      return previous.every(x => x.complete)
     }
   },
   data() {
     return {
-      e1: 'Damer',
+      // currentStep: !this.currentRound ? 1 : this.currentRound.sets.find(x => x.selected).id,
       pointsComplete: false,
+      dialog: false,
       sets: [
         {
           id: 1,
@@ -139,35 +153,15 @@ export default {
         this.e1 = val
       }
     },
-    // set.score
   },
   components: { Queens },
 }
 </script>
 
 <style>
-.input-group--slider {
-  margin-top: 10px;
-}
-
-.slider__thumb {
-  width: 40px !important;
-  height: 40px !important;
-}
-
-.input-group__input {
-  padding-right: 20px;
-}
-
-.stepper__wrapper {
-  height: 100% !important;
-}
-
-.stepper__wrapper slot {
-  margin-bottom: 20px !important;
-}
-
-.layout .slot .align-center .row .spacer {
-  margin-bottom: 20px;
+@media only screen and (max-width: 959px) {
+  .stepper__label {
+    display: block !important;
+  }
 }
 </style>
