@@ -16,17 +16,31 @@ const setCurrentRound = ({ state, commit, getters }) => {
     return dateA - dateB
   })
   return rounds && rounds.length > 0 ? rounds[0] : { sets: [] }
-  // commit('updateScore', { id, playerId, step: step * -1 })
 }
 
-const increment = ({ commit, getters }, { id, step, playerId, max }) => {
+const roundComplete = ({ state, commit, getters }) => {
+  const players = state.serie.players.reduce((idObject, curr) => {
+    idObject[curr.id] = 0
+    return idObject
+  }, {})
+  const score = getters.currentRound.sets.reduce((sum, set) => {
+    Object.keys(set.score).forEach(key => {
+      sum[key] = set.score[key] + sum[key]
+    })
+    return sum
+  }, players)
+  console.log(score)
+  commit('setRoundComplete', { id: getters.currentRound.id })
+}
+
+const increment = ({ commit, getters, dispatch }, { id, step, playerId, max }) => {
   commit('updateScore', { id, playerId, step })
   const set = getters.currentRound.sets.find(x => x.id === id)
   const currentScore = Object.keys(set.score || {}).reduce((acc, curr) => (acc = acc + set.score[curr]), 0)
   if (currentScore === max) {
     commit('setCompleteSetStatus', { id, status: true })
     if (getters.currentRound.sets.every(x => x.complete)) {
-      // Round finished!
+      dispatch('roundComplete')
     } else {
       const { id } = getters.currentRound.sets.find(x => !x.complete)
       commit('setSelectedSet', { id })
@@ -43,5 +57,6 @@ export default {
   setSerieRef,
   increment,
   decrement,
-  setCurrentRound
+  setCurrentRound,
+  roundComplete
 }

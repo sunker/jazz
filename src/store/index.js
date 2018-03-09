@@ -14,6 +14,14 @@ const createStore = () => {
     actions,
     mutations: {
       ...firebaseMutations,
+      setRoundComplete: (state, { id }) => {
+        const currentRound = state.serie.rounds.sort(function compare (a, b) {
+          const dateA = new Date(a.created_at)
+          const dateB = new Date(b.created_at)
+          return dateA - dateB
+        })[0]
+        currentRound.complete = true
+      },
       setSelectedSet: (state, { id }) => {
         const currentRound = state.serie.rounds.sort(function compare (a, b) {
           const dateA = new Date(a.created_at)

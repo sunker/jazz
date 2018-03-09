@@ -24,7 +24,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar color="blue" dark fixed app>
-      <v-toolbar-title>Jazz</v-toolbar-title>
+      <v-toolbar-title>Jazz<v-icon style="margin-left:5px">music_note</v-icon></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>

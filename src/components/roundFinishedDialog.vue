@@ -25,14 +25,12 @@ export default {
       },
       set(value) {
         // this.$store.commit('setSelectedSet', { id: value })
-
         console.log(value)
       }
     },
   },
   data() {
     return {
-      dialog: false
     }
   }
 }

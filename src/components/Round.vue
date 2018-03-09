@@ -1,5 +1,6 @@
 <template>
   <div style="width:100%">
+    <round-finished-dialog></round-finished-dialog>
     <v-stepper v-model="currentStep" alt-labels>
       <v-stepper-header>
         <template v-for="(set, index) in sets">
@@ -17,35 +18,32 @@
       <v-stepper-items>
         <v-stepper-content
           :step="set.id"
-          v-for="(set, index) in sets"
+          v-for="(set) in sets"
           :key="set.name">
           <template>
             {{set.name}}
             <v-layout justify-center column>
               <v-layout v-for="player in players" v-bind:key="player.id" align-center row spacer slot="header">
                 <v-flex xs1>
-                  <v-avatar size="36px" slot="activator">
-                    <v-icon>person</v-icon>
-                  </v-avatar>
-                </v-flex>
-                <v-flex xs4 class="text-xs-left" style="margin-left:5px;">
-                  <strong class="grey--text">{{player.name}}</strong>
-                </v-flex>
-                  <v-btn :disabled="currentPlayerScore(set.id, player.id) === 0" color="secondary" outline @click="decrease(player, set)">
-                    <v-icon dark>remove</v-icon>
-                  </v-btn>
-                  <v-btn :disabled="disableIncrementButton(set, player.id)" color="green" @click="increase(player, set)">
-                    <v-icon color="white">add</v-icon>
-                  </v-btn>
-
+                <v-avatar size="36px" slot="activator">
+                  <v-icon>person</v-icon>
+                </v-avatar>
+              </v-flex>
+              <v-flex xs3 class="text-xs-left" style="margin-left:5px;">
+                <strong class="grey--text">{{player.name}}</strong>
+              </v-flex>
+                <v-btn :disabled="currentPlayerScore(set.id, player.id) === 0" color="secondary" outline @click="decrease(player, set)">
+                  <v-icon dark>remove</v-icon>
+                </v-btn>
+                <v-btn :disabled="disableIncrementButton(set, player.id)" color="green" @click="increase(player, set)">
+                  <v-icon color="white">add</v-icon>
+                </v-btn>
                 <v-flex xs1 class="text-xs-right" style="margin-left:5px;">
-                  <strong class="grey--text" v-bind:style="{ fontSize: pointSize + 'px' }">{{currentPlayerScore(set.id, player.id)}}</strong>
+                  <strong class="" v-bind:style="{ fontSize: pointSize + 'px' }">{{currentPlayerScore(set.id, player.id)}}</strong>
                 </v-flex>
               </v-layout>
             </v-layout>
           </template>
-          <v-btn color="primary" @click.native.stop="dialog = true">Continue</v-btn>
-          <v-btn flat>Cancel</v-btn>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -55,6 +53,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Queens from './Queens'
+import RoundFinishedDialog from './RoundFinishedDialog'
 
 export default {
   name: 'round',
@@ -114,7 +113,6 @@ export default {
     return {
       // currentStep: !this.currentRound ? 1 : this.currentRound.sets.find(x => x.selected).id,
       pointsComplete: false,
-      dialog: false,
       sets: [
         {
           id: 1,
@@ -154,7 +152,7 @@ export default {
       }
     },
   },
-  components: { Queens },
+  components: { Queens, RoundFinishedDialog },
 }
 </script>
 
