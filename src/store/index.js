@@ -14,13 +14,16 @@ const createStore = () => {
     actions,
     mutations: {
       ...firebaseMutations,
-      setRoundComplete: (state, { id }) => {
+      setRoundComplete: (state, { id, highScore, winner, loser }) => {
         const currentRound = state.serie.rounds.sort(function compare (a, b) {
           const dateA = new Date(a.created_at)
           const dateB = new Date(b.created_at)
           return dateA - dateB
         })[0]
         currentRound.complete = true
+        currentRound.winner = winner
+        currentRound.loser = loser
+        currentRound.highScore = highScore
       },
       setSelectedSet: (state, { id }) => {
         const currentRound = state.serie.rounds.sort(function compare (a, b) {
@@ -56,6 +59,10 @@ const createStore = () => {
           Vue.set(set.score, playerId, step)
           // set.score[playerId] = step
         }
+        currentRound.highScore = [{ id: 1, name: 'röv', score: 2 }, { id: 2, name: 'röv2', score: 34 }]
+        currentRound.complete = true
+        currentRound.winner = 'winner'
+        currentRound.loser = 'loser'
       }
     }
   })

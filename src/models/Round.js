@@ -3,6 +3,7 @@ export default class Round {
     this.complete = false
     this.winner = null
     this.loser = null
+    this.highScore = []
     this.sets = [
       {
         id: 1,

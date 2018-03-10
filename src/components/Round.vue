@@ -35,7 +35,7 @@
                 <v-btn :disabled="currentPlayerScore(set.id, player.id) === 0" color="secondary" outline @click="decrease(player, set)">
                   <v-icon dark>remove</v-icon>
                 </v-btn>
-                <v-btn :disabled="disableIncrementButton(set, player.id)" color="green" @click="increase(player, set)">
+                <v-btn @mousedown="increase(player, set)" :disabled="disableIncrementButton(set, player.id)" color="green" @click="increase(player, set)">
                   <v-icon color="white">add</v-icon>
                 </v-btn>
                 <v-flex xs1 class="text-xs-right" style="margin-left:5px;">

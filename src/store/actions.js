@@ -1,11 +1,14 @@
 import { firebaseAction } from 'vuexfire'
 
-const setSerieRef = firebaseAction(({ bindFirebaseRef, dispatch }, ref) => {
+const setSerieRef = firebaseAction(({ bindFirebaseRef, dispatch, state }, ref) => {
   bindFirebaseRef('serie', ref, {
     wait: true,
     readyCallback: () => {
-      dispatch('setCurrentRound')
-    }
+      state.serie.name = 'mm'
+    },
+    errorCallback: (error) => {
+      console.error(error)
+    },
   })
 })
 
@@ -20,17 +23,23 @@ const setCurrentRound = ({ state, commit, getters }) => {
 
 const roundComplete = ({ state, commit, getters }) => {
   const players = state.serie.players.reduce((idObject, curr) => {
-    idObject[curr.id] = 0
+    idObject[curr.id] = {
+      name: curr.name,
+      score: 0,
+      id: curr.id
+    }
     return idObject
   }, {})
   const score = getters.currentRound.sets.reduce((sum, set) => {
     Object.keys(set.score).forEach(key => {
-      sum[key] = set.score[key] + sum[key]
+      sum[key].score = set.score[key] + sum[key].score
     })
     return sum
   }, players)
-  console.log(score)
-  commit('setRoundComplete', { id: getters.currentRound.id })
+  const highScore = Object.values(score).sort((x, y) => x.score > y.score)
+  const winner = highScore[0]
+  const loser = highScore[highScore.length - 1]
+  commit('setRoundComplete', { id: getters.currentRound.id, highScore, winner, loser })
 }
 
 const increment = ({ commit, getters, dispatch }, { id, step, playerId, max }) => {

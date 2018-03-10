@@ -1,6 +1,6 @@
 <template>
   <div style="width:100%">
-    <round></round>
+    <round v-if="serie"></round>
     <!-- <serie-footer></serie-footer> -->
   </div>
 </template>
